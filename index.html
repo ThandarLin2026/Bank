@@ -24,16 +24,13 @@
             color: white;
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.4s;
             margin: 0 auto;
         }
 
         .card-bg-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(145deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.1) 100%);
             z-index: 1;
         }
@@ -47,26 +44,22 @@
             justify-content: space-between;
         }
 
-        /* === FIX: Logo and QR alignment (already centered) === */
         .bank-logo-wrapper {
             width: 70px;
             height: 70px;
             background: white;
             padding: 8px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            align-self: center;
         }
 
         .bank-logo-wrapper img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            display: block;
         }
 
         .qr-box {
@@ -78,16 +71,13 @@
             align-items: center;
             justify-content: center;
             padding: 4px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             flex-shrink: 0;
-            align-self: center;
         }
 
         .qr-box img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            display: block;
         }
 
         .designer-credit {
@@ -96,7 +86,6 @@
             bottom: min(8px, 2vw);
             font-size: clamp(7px, 2.5vw, 9px);
             opacity: 0.4;
-            font-weight: 300;
             z-index: 5;
             white-space: nowrap;
         }
@@ -122,31 +111,31 @@
             opacity: 0.9;
         }
 
-        /* === FIX: Icon and text alignment in detail rows === */
+        /* === FIX: Icon and text perfectly centered === */
         .detail-row {
             display: flex;
-            align-items: center;      /* vertical center for all items */
+            align-items: center;      /* vertically center all items */
             gap: 8px;
             font-size: clamp(0.8rem, 3.5vw, 1.1rem);
-            line-height: 1.2;         /* prevent extra space */
+            line-height: 1;           /* remove extra line spacing */
         }
 
         .detail-icon {
             width: 20px;
-            height: 20px;             /* fixed height to match width */
+            height: 20px;             /* fixed size */
             flex-shrink: 0;
             color: currentColor;
             opacity: 0.8;
-            align-self: center;       /* ensure icon is centered vertically */
             display: inline-block;
-            vertical-align: middle;
+            vertical-align: middle;    /* fallback */
+            margin: 0;                 /* no extra margin */
         }
 
         .detail-label {
             font-weight: 500;
             opacity: 0.9;
             letter-spacing: 0.3px;
-            line-height: 1.2;
+            line-height: 1;            /* match icon height */
         }
 
         .detail-value {
@@ -154,7 +143,7 @@
             font-family: monospace;
             letter-spacing: -0.02em;
             margin-left: 4px;
-            line-height: 1.2;
+            line-height: 1;            /* match icon height */
         }
 
         .card-footer {
@@ -167,6 +156,7 @@
             gap: min(8px, 2vw);
         }
 
+        /* Custom select (unchanged) */
         .custom-select-container {
             position: relative;
             width: 100%;
@@ -181,8 +171,6 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .select-options {
@@ -201,23 +189,17 @@
         }
 
         .select-option {
-            padding: 12px 12px;
+            padding: 12px;
             display: flex;
             align-items: center;
             gap: 12px;
             cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .select-option:hover {
-            background: #f9fafb;
         }
 
         .select-option img {
             width: 30px;
             height: 30px;
             object-fit: contain;
-            border-radius: 4px;
         }
 
         .bg-bbl { background-color: #003399; }
@@ -231,12 +213,9 @@
         .bg-kpay { background-color: #1b4e9b; }
 
         .bg-ks .designer-credit, .bg-wave .designer-credit { opacity: 0.5; color: black; }
-        .bg-ks .border-white\/20, .bg-wave .border-white\/20 { border-color: rgba(0,0,0,0.1); }
 
         @media (min-width: 768px) {
-            .bank-card {
-                width: 450px;
-            }
+            .bank-card { width: 450px; }
         }
 
         #downloadBtn, #installBtn {
@@ -264,9 +243,7 @@
                             <img id="selectedIcon" src="https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/bbl.png" alt="" class="w-8 h-8">
                             <span id="selectedLabel" class="font-medium truncate">Bangkok Bank (BBL)</span>
                         </div>
-                        <div id="selectOptions" class="select-options">
-                            <!-- injected by JS -->
-                        </div>
+                        <div id="selectOptions" class="select-options"></div>
                     </div>
                 </div>
 
@@ -286,13 +263,13 @@
                 </div>
 
                 <button id="downloadBtn" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-base md:text-lg hover:bg-blue-700 transition-all flex items-center justify-center gap-3 shadow-lg shadow-blue-100 active:scale-[0.98]">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Save Card Image
                 </button>
 
-                <!-- Install App button (hidden until prompt) -->
+                <!-- Install App Button -->
                 <button id="installBtn" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black text-base md:text-lg hover:bg-green-700 transition-all flex items-center justify-center gap-3 shadow-lg shadow-green-100 active:scale-[0.98] hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Install App
                 </button>
             </div>
@@ -305,7 +282,7 @@
                 <div class="designer-credit">Design By : JueHtet</div>
 
                 <div class="card-content">
-                    <!-- Top row: logo, bank name, QR -->
+                    <!-- Top row -->
                     <div class="flex justify-between items-start">
                         <div class="flex items-start gap-2">
                             <div class="bank-logo-wrapper">
@@ -326,15 +303,15 @@
 
                     <div></div>
 
-                    <!-- Account details (fixed alignment) -->
+                    <!-- Account details (icons and text now perfectly centered) -->
                     <div class="space-y-2">
                         <div class="detail-row">
-                            <svg class="detail-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             <span class="detail-label">Name:</span>
                             <span id="cardHolderName" class="detail-value">Holder Name</span>
                         </div>
                         <div class="detail-row">
-                            <svg class="detail-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
                             <span class="detail-label">Number:</span>
                             <span id="cardBankNumber" class="detail-value">000-0-00000-0</span>
                         </div>
@@ -342,7 +319,7 @@
 
                     <!-- Footer -->
                     <div class="card-footer">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: clamp(12px, 3vw, 16px);"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
                         <span>ငွေလွှဲပြီးတိုင်းစလစ်ပို့ပါ</span>
                     </div>
                 </div>
@@ -366,7 +343,6 @@
             ];
 
             let selectedBank = banks[0];
-
             const selectTrigger = document.getElementById('selectTrigger');
             const selectOptions = document.getElementById('selectOptions');
             const selectedIcon = document.getElementById('selectedIcon');
@@ -392,10 +368,7 @@
                 e.stopPropagation();
                 selectOptions.style.display = selectOptions.style.display === 'block' ? 'none' : 'block';
             };
-
-            window.onclick = () => {
-                selectOptions.style.display = 'none';
-            };
+            window.onclick = () => selectOptions.style.display = 'none';
 
             function updateCard() {
                 document.getElementById('cardBankLogo').src = selectedBank.logo;
@@ -408,7 +381,6 @@
             document.getElementById('inputName').oninput = function() {
                 document.getElementById('cardHolderName').textContent = this.value || "Holder Name";
             };
-
             document.getElementById('inputNumber').oninput = function() {
                 document.getElementById('cardBankNumber').textContent = this.value || "000-0-00000-0";
             };
@@ -427,26 +399,15 @@
             };
 
             document.getElementById('downloadBtn').onclick = () => {
-                html2canvas(cardArea, { 
-                    useCORS: true, 
-                    scale: 3,
-                    borderRadius: 20,
-                    allowTaint: false,
-                    logging: false
-                }).then(canvas => {
+                html2canvas(cardArea, { useCORS: true, scale: 3 }).then(canvas => {
                     const link = document.createElement('a');
                     link.download = `${selectedBank.abbr}_Card.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
-                }).catch(err => alert('Image capture failed, but you can still screenshot manually.'));
+                });
             };
 
-            // Fix for iOS active style
-            document.querySelectorAll('button, .select-trigger, .select-option').forEach(el => {
-                el.addEventListener('touchstart', function(){}, {passive: true});
-            });
-
-            // ================= PWA INSTALL IMPROVED =================
+            // ========== PWA Install ==========
             let deferredPrompt;
             const installBtn = document.getElementById('installBtn');
 
@@ -460,84 +421,46 @@
                 if (!deferredPrompt) return;
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                    installBtn.classList.add('hidden');
-                }
+                if (outcome === 'accepted') installBtn.classList.add('hidden');
                 deferredPrompt = null;
             });
 
             window.addEventListener('appinstalled', () => {
-                console.log('App installed successfully');
                 installBtn.classList.add('hidden');
                 deferredPrompt = null;
             });
 
-            // ========== ROBUST MANIFEST FOR STANDALONE APP ==========
+            // ========== Manifest & Service Worker ==========
             function generateIcon(size) {
                 const canvas = document.createElement('canvas');
-                canvas.width = size;
-                canvas.height = size;
+                canvas.width = canvas.height = size;
                 const ctx = canvas.getContext('2d');
-
-                const gradient = ctx.createLinearGradient(0, 0, size, size);
-                gradient.addColorStop(0, '#003399');
-                gradient.addColorStop(1, '#4f7eb3');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, size, size);
-
-                ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                ctx.beginPath();
-                ctx.roundRect(size * 0.2, size * 0.2, size * 0.6, size * 0.5, size * 0.1);
-                ctx.fill();
-
                 ctx.fillStyle = '#003399';
-                ctx.font = `bold ${size * 0.3}px 'Roboto', sans-serif`;
+                ctx.fillRect(0, 0, size, size);
+                ctx.fillStyle = 'white';
+                ctx.font = `bold ${size*0.4}px Roboto`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('B', size / 2, size / 2);
-
+                ctx.fillText('B', size/2, size/2);
                 return canvas.toDataURL('image/png');
-            }
-
-            if (!CanvasRenderingContext2D.prototype.roundRect) {
-                CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
-                    if (w < 2 * r) r = w / 2;
-                    if (h < 2 * r) r = h / 2;
-                    this.moveTo(x + r, y);
-                    this.lineTo(x + w - r, y);
-                    this.quadraticCurveTo(x + w, y, x + w, y + r);
-                    this.lineTo(x + w, y + h - r);
-                    this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-                    this.lineTo(x + r, y + h);
-                    this.quadraticCurveTo(x, y + h, x, y + h - r);
-                    this.lineTo(x, y + r);
-                    this.quadraticCurveTo(x, y, x + r, y);
-                    this.closePath();
-                    return this;
-                };
             }
 
             const icon192 = generateIcon(192);
             const icon512 = generateIcon(512);
 
-            // Standard manifest for standalone app
             const manifest = {
                 name: "Bank Card Generator",
                 short_name: "BankCard",
-                description: "Create bank cards & install as app",
                 start_url: "./",
-                scope: "./",
                 display: "standalone",
                 background_color: "#f3f4f6",
                 theme_color: "#003399",
                 icons: [
-                    { src: icon192, sizes: "192x192", type: "image/png", purpose: "any maskable" },
-                    { src: icon512, sizes: "512x512", type: "image/png", purpose: "any maskable" }
+                    { src: icon192, sizes: "192x192", type: "image/png" },
+                    { src: icon512, sizes: "512x512", type: "image/png" }
                 ]
             };
 
-            // Replace manifest link
             const oldManifest = document.querySelector('link[rel="manifest"]');
             if (oldManifest) oldManifest.remove();
 
@@ -548,21 +471,8 @@
             manifestLink.href = manifestUrl;
             document.head.appendChild(manifestLink);
 
-            // Service worker for offline (optional but helps PWA)
             if ('serviceWorker' in navigator) {
-                const swCode = `
-                    self.addEventListener('install', (e) => {
-                        e.waitUntil(caches.open('bank-card-pwa').then(c => c.addAll(['./'])));
-                    });
-                    self.addEventListener('fetch', (e) => {
-                        e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
-                    });
-                `;
-                const swBlob = new Blob([swCode], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(swBlob);
-                navigator.serviceWorker.register(swUrl, { scope: './' })
-                    .then(() => console.log('📱 PWA ready – you can install this app!'))
-                    .catch(err => console.log('Service worker registration failed:', err));
+                navigator.serviceWorker.register('sw.js').catch(() => {});
             }
         })();
     </script>
