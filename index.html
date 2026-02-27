@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bank Card Generator</title>
+    <title>Bank Card Generator · PWA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -11,7 +11,7 @@
         
         body {
             font-family: 'Roboto', 'Pyidaungsu', sans-serif;
-            background-color: #f8fafc;
+            background-color: #f3f4f6;
         }
 
         .bank-card {
@@ -22,8 +22,8 @@
             position: relative;
             color: white;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .card-bg-overlay {
@@ -32,7 +32,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(145deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.05) 100%);
+            background: linear-gradient(145deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.1) 100%);
             z-index: 1;
         }
 
@@ -54,7 +54,7 @@
             align-items: center;
             justify-content: center;
             padding: 4px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             overflow: hidden;
         }
 
@@ -64,13 +64,6 @@
             object-fit: contain;
         }
 
-        .qr-box span {
-            color: #666;
-            font-size: 10px;
-            text-align: center;
-            font-weight: bold;
-        }
-
         .designer-credit {
             position: absolute;
             right: 15px;
@@ -78,8 +71,60 @@
             font-size: 9px;
             opacity: 0.4;
             font-weight: 300;
-            letter-spacing: 0.5px;
             z-index: 5;
+        }
+
+        /* Custom Dropdown Styles */
+        .custom-select-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .select-trigger {
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+
+        .select-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            margin-top: 5px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 50;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .select-option {
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .select-option:hover {
+            background: #f9fafb;
+        }
+
+        .select-option img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            border-radius: 4px;
         }
 
         /* Bank Themes */
@@ -90,191 +135,304 @@
         .bg-scb { background-color: #4e2e7f; }
         .bg-ttb { background-color: #f15a22; }
         .bg-ks { background-color: #fdb913; color: #543729 !important; }
-        
-        /* Adjust icon/text colors for light colored banks like Krungsri */
-        .bg-ks .qr-box { background: #ffffff; }
-        .bg-ks .designer-credit { color: #543729; opacity: 0.3; }
-        .bg-ks .border-white\/20 { border-color: rgba(84, 55, 41, 0.2); }
+        .bg-wave { background-color: #f6d114; color: #000 !important; }
+        .bg-kpay { background-color: #1b4e9b; }
+
+        .bg-ks .designer-credit, .bg-wave .designer-credit { opacity: 0.5; color: black; }
+        .bg-ks .border-white\/20, .bg-wave .border-white\/20 { border-color: rgba(0,0,0,0.1); }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen p-4">
+<body class="p-4 md:p-10 flex flex-col items-center">
 
-    <div class="w-full max-w-5xl grid lg:grid-cols-2 gap-10 items-start">
+    <div class="w-full max-w-5xl grid lg:grid-cols-2 gap-10">
         
-        <!-- Input Form -->
-        <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
-            <h2 class="text-2xl font-black mb-8 text-gray-800 border-b pb-4">Card Settings</h2>
+        <!-- Controls -->
+        <div class="bg-white p-8 rounded-3xl shadow-lg">
+            <h2 class="text-2xl font-black mb-6 text-gray-800 border-b pb-4 italic">Card Settings</h2>
             
-            <div class="space-y-5">
+            <div class="space-y-6">
+                <!-- Custom Select -->
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Select Bank</label>
-                    <select id="bankSelect" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-                        <option value="bbl" data-abbr="BBL" data-en="Bangkok Bank" data-th="ธนาคารกรุงเทพ">Bangkok Bank (BBL)</option>
-                        <option value="kbank" data-abbr="K Bank" data-en="Kasikorn Bank" data-th="ธนาคารกสิกรไทย">Kasikorn Bank (K Bank)</option>
-                        <option value="ktb" data-abbr="KTB" data-en="Krungthai Bank" data-th="ธนาคารกรุงไทย">Krungthai Bank (KTB)</option>
-                        <option value="gsb" data-abbr="GSB" data-en="Government Savings Bank" data-th="ธนาคารออมสิน">Government Savings Bank (GSB)</option>
-                        <option value="scb" data-abbr="SCB" data-en="Siam Commercial Bank" data-th="ธนาคารไทยพาณิชย์">Siam Commercial Bank (SCB)</option>
-                        <option value="ttb" data-abbr="TTB" data-en="TMBThanachart Bank" data-th="ธนาคารทหารไทยธนชาต">TMBThanachart Bank (TTB)</option>
-                        <option value="ks" data-abbr="Krungsri" data-en="Krungsri Bank" data-th="ธนาคารกรุงศรีอยุธยา">Krungsri Bank</option>
-                    </select>
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Select Bank / Wallet</label>
+                    <div class="custom-select-container">
+                        <div id="selectTrigger" class="select-trigger">
+                            <img id="selectedIcon" src="https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/bbl.png" alt="">
+                            <span id="selectedLabel" class="font-medium">Bangkok Bank (BBL)</span>
+                        </div>
+                        <div id="selectOptions" class="select-options">
+                            <!-- Options will be injected by JS -->
+                        </div>
+                    </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Account Holder Name</label>
-                    <input type="text" id="inputName" placeholder="အမည်ရိုက်ထည့်ပါ" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Account Holder Name</label>
+                    <input type="text" id="inputName" placeholder="အမည်ရိုက်ထည့်ပါ" class="w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Bank Number</label>
-                    <input type="text" id="inputNumber" placeholder="xxx-x-xxxxx-x" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Bank Number</label>
+                    <input type="text" id="inputNumber" placeholder="xxx-x-xxxxx-x" class="w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Upload QR Code</label>
-                    <input type="file" id="qrUpload" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Upload QR Code</label>
+                    <input type="file" id="qrUpload" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100 cursor-pointer">
                 </div>
 
-                <button id="downloadBtn" class="w-full mt-6 bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 active:scale-95 transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-3 text-lg">
+                <button id="downloadBtn" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-lg hover:bg-blue-700 transition-all flex items-center justify-center gap-3 shadow-lg shadow-blue-100">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Download Card
+                    Save Card Image
                 </button>
             </div>
         </div>
 
-        <!-- Preview Section -->
-        <div class="flex flex-col items-center">
-            <div id="captureArea" class="bank-card bg-bbl shadow-2xl relative">
+        <!-- Preview -->
+        <div class="flex flex-col items-center justify-center">
+            <div id="captureArea" class="bank-card bg-bbl relative">
                 <div class="card-bg-overlay"></div>
-                
-                <!-- Designer Credit (Watermark style) -->
                 <div class="designer-credit">Design By : JueHtet</div>
 
                 <div class="card-content">
-                    <!-- Top Row: Logo & QR -->
                     <div class="flex justify-between items-start">
-                        <div class="bg-white/95 p-2 rounded-xl shadow-sm">
-                            <img id="cardBankLogo" src="https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/bbl.png" alt="Bank Logo" class="w-[74px] h-[74px] object-contain">
+                        <div class="bg-white p-2 rounded-xl shadow-md">
+                            <img id="cardBankLogo" src="https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/bbl.png" alt="Logo" class="w-[74px] h-[74px] object-contain">
                         </div>
                         <div class="qr-box" id="qrDisplay">
-                            <span>Upload<br>QR Code</span>
+                            <span class="text-[10px] text-gray-400 font-bold text-center">No QR<br>Selected</span>
                         </div>
                     </div>
 
-                    <!-- Bank Name & Abbr -->
-                    <div class="mt-2">
+                    <div class="mt-4">
                         <div class="flex items-baseline gap-2">
                             <h3 id="cardBankNameEN" class="text-xl font-black">Bangkok Bank</h3>
                             <span id="cardBankAbbr" class="text-sm font-bold opacity-80">(BBL)</span>
                         </div>
-                        <p id="cardBankNameTH" class="text-sm opacity-90 font-medium">ธนาคารกรุงเทพ</p>
+                        <p id="cardBankNameTH" class="text-xs opacity-90 font-medium">ธนาคารกรุงเทพ</p>
                     </div>
 
-                    <!-- Account Info -->
-                    <div class="space-y-2 mb-1">
+                    <div class="space-y-1">
                         <div class="flex items-center gap-3">
-                            <div class="bg-white/20 p-1.5 rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                            </div>
-                            <span id="cardBankNumber" class="text-2xl font-mono tracking-tighter font-bold">000-0-00000-0</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                            <span id="cardBankNumber" class="text-2xl font-mono font-bold tracking-tight">000-0-00000-0</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <div class="bg-white/20 p-1.5 rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             <span id="cardHolderName" class="text-lg font-bold">Holder Name</span>
                         </div>
                     </div>
 
-                    <!-- Footer -->
                     <div class="border-t border-white/20 pt-2 flex items-center justify-center gap-2 text-[11px] font-bold">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
                         <span>ငွေလွှဲပြီးရင် ဖြတ်ပိုင်းပို့ပေးပါ</span>
                     </div>
                 </div>
             </div>
-            
-            <div class="mt-6 flex items-center gap-2 text-gray-400">
-                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                <span class="text-sm font-bold uppercase tracking-widest">Live Preview Card</span>
-            </div>
+            <p class="mt-6 text-sm font-bold text-gray-400 tracking-widest uppercase">Card Preview</p>
         </div>
     </div>
 
+    <!-- ========== EXISTING FUNCTIONALITY (unchanged) ========== -->
     <script>
-        const bankLogos = {
-            bbl: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/bbl.png",
-            kbank: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/kbank.png",
-            ktb: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/ktb.png",
-            gsb: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/om.png",
-            scb: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/scb.png",
-            ttb: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/ttb.png",
-            ks: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/ks.png"
+        const banks = [
+            { id: 'bbl', abbr: 'BBL', en: 'Bangkok Bank', th: 'ธนาคารกรุงเทพ', logo: 'https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/bbl.png' },
+            { id: 'kbank', abbr: 'K Bank', en: 'Kasikorn Bank', th: 'ธนาคารกสิกรไทย', logo: 'https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/kbank.png' },
+            { id: 'ktb', abbr: 'KTB', en: 'Krungthai Bank', th: 'ธนาคารกรุงไทย', logo: 'https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/ktb.png' },
+            { id: 'gsb', abbr: 'GSB', en: 'Government Savings Bank', th: 'ธนาคารออมสิน', logo: 'https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/om.png' },
+            { id: 'scb', abbr: 'SCB', en: 'Siam Commercial Bank', th: 'ธนาคารไทยพาณิชย์', logo: 'https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/scb.png' },
+            { id: 'ttb', abbr: 'TTB', en: 'TMBThanachart Bank', th: 'ธนาคารทหารไทยธนชาต', logo: 'https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/ttb.png' },
+            { id: 'ks', abbr: 'Krungsri', en: 'Krungsri Bank', th: 'ธนาคารกรุงศรีอยุธยา', logo: 'https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/ks.png' },
+            { id: 'wave', abbr: 'Wave', en: 'Wave Pay', th: 'เวฟ เพย์', logo: 'https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/wave.png' },
+            { id: 'kpay', abbr: 'Kpay', en: 'KBZ Pay', th: 'เคบีแซด เพย์', logo: 'https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/kpay.png' }
+        ];
+
+        let selectedBank = banks[0];
+
+        const selectTrigger = document.getElementById('selectTrigger');
+        const selectOptions = document.getElementById('selectOptions');
+        const selectedIcon = document.getElementById('selectedIcon');
+        const selectedLabel = document.getElementById('selectedLabel');
+        const cardArea = document.getElementById('captureArea');
+
+        // Build Custom Dropdown
+        banks.forEach(bank => {
+            const div = document.createElement('div');
+            div.className = 'select-option';
+            div.innerHTML = `<img src="${bank.logo}" alt=""> <span>${bank.en} (${bank.abbr})</span>`;
+            div.onclick = () => {
+                selectedBank = bank;
+                selectedIcon.src = bank.logo;
+                selectedLabel.textContent = `${bank.en} (${bank.abbr})`;
+                selectOptions.style.display = 'none';
+                updateCard();
+            };
+            selectOptions.appendChild(div);
+        });
+
+        selectTrigger.onclick = () => {
+            selectOptions.style.display = selectOptions.style.display === 'block' ? 'none' : 'block';
         };
 
-        const bankSelect = document.getElementById('bankSelect');
-        const inputName = document.getElementById('inputName');
-        const inputNumber = document.getElementById('inputNumber');
-        const qrUpload = document.getElementById('qrUpload');
-        
-        const cardArea = document.getElementById('captureArea');
-        const cardBankLogo = document.getElementById('cardBankLogo');
-        const cardBankNameEN = document.getElementById('cardBankNameEN');
-        const cardBankNameTH = document.getElementById('cardBankNameTH');
-        const cardBankAbbr = document.getElementById('cardBankAbbr');
-        const cardBankNumber = document.getElementById('cardBankNumber');
-        const cardHolderName = document.getElementById('cardHolderName');
-        const qrDisplay = document.getElementById('qrDisplay');
+        window.onclick = (e) => {
+            if (!selectTrigger.contains(e.target)) selectOptions.style.display = 'none';
+        };
 
-        // Logic to update Card
-        bankSelect.addEventListener('change', function() {
-            const val = this.value;
-            const option = this.options[this.selectedIndex];
-            
-            // UI Updates
-            cardBankLogo.src = bankLogos[val];
-            cardBankNameEN.textContent = option.dataset.en;
-            cardBankNameTH.textContent = option.dataset.th;
-            cardBankAbbr.textContent = `(${option.dataset.abbr})`;
-            
-            // Background Update
-            cardArea.className = `bank-card bg-${val} shadow-2xl relative`;
-        });
+        function updateCard() {
+            document.getElementById('cardBankLogo').src = selectedBank.logo;
+            document.getElementById('cardBankNameEN').textContent = selectedBank.en;
+            document.getElementById('cardBankAbbr').textContent = `(${selectedBank.abbr})`;
+            document.getElementById('cardBankNameTH').textContent = selectedBank.th;
+            cardArea.className = `bank-card bg-${selectedBank.id} relative`;
+        }
 
-        inputName.addEventListener('input', function() {
-            cardHolderName.textContent = this.value || "Holder Name";
-        });
+        document.getElementById('inputName').oninput = function() {
+            document.getElementById('cardHolderName').textContent = this.value || "Holder Name";
+        };
 
-        inputNumber.addEventListener('input', function() {
-            cardBankNumber.textContent = this.value || "000-0-00000-0";
-        });
+        document.getElementById('inputNumber').oninput = function() {
+            document.getElementById('cardBankNumber').textContent = this.value || "000-0-00000-0";
+        };
 
-        qrUpload.addEventListener('change', function(e) {
+        document.getElementById('qrUpload').onchange = function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(event) {
-                    qrDisplay.innerHTML = `<img src="${event.target.result}" alt="QR">`;
+                reader.onload = (ev) => {
+                    document.getElementById('qrDisplay').innerHTML = `<img src="${ev.target.result}" alt="QR">`;
                 };
                 reader.readAsDataURL(file);
             }
-        });
+        };
 
-        // Download Handler
-        document.getElementById('downloadBtn').addEventListener('click', () => {
-            html2canvas(cardArea, {
-                useCORS: true,
-                scale: 4, // Ultra high res
-                backgroundColor: null,
-                logging: false,
-                borderRadius: 20
-            }).then(canvas => {
+        document.getElementById('downloadBtn').onclick = () => {
+            html2canvas(cardArea, { useCORS: true, scale: 4, borderRadius: 20 }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `BankCard_${inputName.value || 'Bank'}.png`;
-                link.href = canvas.toDataURL('image/png', 1.0);
+                link.download = `${selectedBank.abbr}_Card.png`;
+                link.href = canvas.toDataURL('image/png');
                 link.click();
             });
-        });
+        };
+    </script>
+
+    <!-- ========== PWA ENHANCEMENT (installable app) ========== -->
+    <script>
+        (function() {
+            // ------ helper for rounded rect (icon drawing) ------
+            if (!CanvasRenderingContext2D.prototype.roundRect) {
+                CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+                    if (w < 2 * r) r = w / 2;
+                    if (h < 2 * r) r = h / 2;
+                    this.moveTo(x + r, y);
+                    this.lineTo(x + w - r, y);
+                    this.quadraticCurveTo(x + w, y, x + w, y + r);
+                    this.lineTo(x + w, y + h - r);
+                    this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                    this.lineTo(x + r, y + h);
+                    this.quadraticCurveTo(x, y + h, x, y + h - r);
+                    this.lineTo(x, y + r);
+                    this.quadraticCurveTo(x, y, x + r, y);
+                    this.closePath();
+                    return this;
+                };
+            }
+
+            // ------ generate PWA icons (dataURL) ------
+            function generateIcon(size) {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                // background gradient
+                const gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#003399');
+                gradient.addColorStop(1, '#4f7eb3');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, size, size);
+
+                // white card shape
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                ctx.beginPath();
+                ctx.roundRect(size * 0.2, size * 0.2, size * 0.6, size * 0.5, size * 0.1);
+                ctx.fill();
+
+                // letter "B" in bank colour
+                ctx.fillStyle = '#003399';
+                ctx.font = `bold ${size * 0.3}px 'Roboto', sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('B', size / 2, size / 2);
+
+                return canvas.toDataURL('image/png');
+            }
+
+            const icon192 = generateIcon(192);
+            const icon512 = generateIcon(512);
+
+            // ------ build manifest ------
+            const manifest = {
+                name: "Bank Card Generator",
+                short_name: "BankCard",
+                description: "Create and download bank cards instantly",
+                start_url: ".",
+                display: "standalone",
+                background_color: "#f3f4f6",
+                theme_color: "#003399",
+                icons: [
+                    {
+                        src: icon192,
+                        sizes: "192x192",
+                        type: "image/png",
+                        purpose: "any maskable"
+                    },
+                    {
+                        src: icon512,
+                        sizes: "512x512",
+                        type: "image/png",
+                        purpose: "any maskable"
+                    }
+                ]
+            };
+
+            // inject manifest link as blob
+            const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+            const manifestUrl = URL.createObjectURL(manifestBlob);
+            let manifestLink = document.querySelector('link[rel="manifest"]');
+            if (!manifestLink) {
+                manifestLink = document.createElement('link');
+                manifestLink.rel = 'manifest';
+                document.head.appendChild(manifestLink);
+            }
+            manifestLink.href = manifestUrl;
+
+            // ------ register service worker (basic offline caching) ------
+            if ('serviceWorker' in navigator) {
+                const swCode = `
+                    self.addEventListener('install', (event) => {
+                        event.waitUntil(
+                            caches.open('bank-card-pwa').then((cache) => {
+                                return cache.addAll(['./']);
+                            })
+                        );
+                    });
+                    self.addEventListener('fetch', (event) => {
+                        event.respondWith(
+                            caches.match(event.request).then((response) => {
+                                return response || fetch(event.request);
+                            })
+                        );
+                    });
+                `;
+                const swBlob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(swBlob);
+                navigator.serviceWorker.register(swUrl, { scope: './' })
+                    .then(reg => console.log('✅ PWA service worker ready', reg))
+                    .catch(err => console.warn('⚠️ SW not supported (still installable?)', err));
+            }
+
+            // optional: tiny hint for the user (browser may show install banner automatically)
+            console.log('📱 PWA assets injected – you can install this app!');
+        })();
     </script>
 </body>
 </html>
-
