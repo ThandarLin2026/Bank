@@ -47,7 +47,7 @@
             justify-content: space-between;
         }
 
-        /* === FIX: Icon alignment (logo and QR) === */
+        /* === FIX: Logo and QR alignment (already centered) === */
         .bank-logo-wrapper {
             width: 70px;
             height: 70px;
@@ -56,17 +56,17 @@
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             display: flex;
-            align-items: center;      /* vertical center */
+            align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            align-self: center;       /* ensure it stays centered in flex row */
+            align-self: center;
         }
 
         .bank-logo-wrapper img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            display: block;            /* remove extra space */
+            display: block;
         }
 
         .qr-box {
@@ -80,7 +80,7 @@
             padding: 4px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             flex-shrink: 0;
-            align-self: center;        /* vertical align with logo */
+            align-self: center;
         }
 
         .qr-box img {
@@ -122,28 +122,39 @@
             opacity: 0.9;
         }
 
+        /* === FIX: Icon and text alignment in detail rows === */
         .detail-row {
             display: flex;
-            align-items: center;
+            align-items: center;      /* vertical center for all items */
             gap: 8px;
             font-size: clamp(0.8rem, 3.5vw, 1.1rem);
+            line-height: 1.2;         /* prevent extra space */
         }
+
         .detail-icon {
             width: 20px;
+            height: 20px;             /* fixed height to match width */
             flex-shrink: 0;
             color: currentColor;
             opacity: 0.8;
+            align-self: center;       /* ensure icon is centered vertically */
+            display: inline-block;
+            vertical-align: middle;
         }
+
         .detail-label {
             font-weight: 500;
             opacity: 0.9;
             letter-spacing: 0.3px;
+            line-height: 1.2;
         }
+
         .detail-value {
             font-weight: 700;
             font-family: monospace;
             letter-spacing: -0.02em;
             margin-left: 4px;
+            line-height: 1.2;
         }
 
         .card-footer {
@@ -294,9 +305,8 @@
                 <div class="designer-credit">Design By : JueHtet</div>
 
                 <div class="card-content">
-                    <!-- Top row: logo, bank name (beside logo), and QR -->
+                    <!-- Top row: logo, bank name, QR -->
                     <div class="flex justify-between items-start">
-                        <!-- Left: logo + bank name -->
                         <div class="flex items-start gap-2">
                             <div class="bank-logo-wrapper">
                                 <img id="cardBankLogo" src="https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/bbl.png" alt="Logo">
@@ -309,16 +319,14 @@
                                 <p id="cardBankNameTH" class="card-bank-th">ธนาคารกรุงเทพ</p>
                             </div>
                         </div>
-                        <!-- Right: QR code -->
                         <div class="qr-box" id="qrDisplay">
                             <span class="text-[0.5rem] text-gray-400 font-bold text-center">No QR<br>Selected</span>
                         </div>
                     </div>
 
-                    <!-- Spacer -->
                     <div></div>
 
-                    <!-- Account details -->
+                    <!-- Account details (fixed alignment) -->
                     <div class="space-y-2">
                         <div class="detail-row">
                             <svg class="detail-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -332,7 +340,7 @@
                         </div>
                     </div>
 
-                    <!-- Footer note -->
+                    <!-- Footer -->
                     <div class="card-footer">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: clamp(12px, 3vw, 16px);"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
                         <span>ငွေလွှဲပြီးတိုင်းစလစ်ပို့ပါ</span>
@@ -438,7 +446,7 @@
                 el.addEventListener('touchstart', function(){}, {passive: true});
             });
 
-            // ================= PWA INSTALL FIX =================
+            // ================= PWA INSTALL IMPROVED =================
             let deferredPrompt;
             const installBtn = document.getElementById('installBtn');
 
@@ -452,9 +460,11 @@
                 if (!deferredPrompt) return;
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User response to install: ${outcome}`);
+                if (outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                    installBtn.classList.add('hidden');
+                }
                 deferredPrompt = null;
-                installBtn.classList.add('hidden');
             });
 
             window.addEventListener('appinstalled', () => {
@@ -463,7 +473,7 @@
                 deferredPrompt = null;
             });
 
-            // ========== IMPROVED MANIFEST FOR BETTER INSTALL ==========
+            // ========== ROBUST MANIFEST FOR STANDALONE APP ==========
             function generateIcon(size) {
                 const canvas = document.createElement('canvas');
                 canvas.width = size;
@@ -511,13 +521,13 @@
             const icon192 = generateIcon(192);
             const icon512 = generateIcon(512);
 
-            // More robust manifest with correct scope and start_url
+            // Standard manifest for standalone app
             const manifest = {
                 name: "Bank Card Generator",
                 short_name: "BankCard",
                 description: "Create bank cards & install as app",
-                start_url: "./",                     // ensure relative path
-                scope: "./",                          // restrict to this folder
+                start_url: "./",
+                scope: "./",
                 display: "standalone",
                 background_color: "#f3f4f6",
                 theme_color: "#003399",
@@ -527,7 +537,7 @@
                 ]
             };
 
-            // Remove old manifest link if any and create new one
+            // Replace manifest link
             const oldManifest = document.querySelector('link[rel="manifest"]');
             if (oldManifest) oldManifest.remove();
 
@@ -538,7 +548,7 @@
             manifestLink.href = manifestUrl;
             document.head.appendChild(manifestLink);
 
-            // Simple service worker for offline (but installation works without it)
+            // Service worker for offline (optional but helps PWA)
             if ('serviceWorker' in navigator) {
                 const swCode = `
                     self.addEventListener('install', (e) => {
@@ -552,7 +562,7 @@
                 const swUrl = URL.createObjectURL(swBlob);
                 navigator.serviceWorker.register(swUrl, { scope: './' })
                     .then(() => console.log('📱 PWA ready – you can install this app!'))
-                    .catch(() => console.log('Service worker not registered (still installable)'));
+                    .catch(err => console.log('Service worker registration failed:', err));
             }
         })();
     </script>
