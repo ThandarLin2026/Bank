@@ -111,7 +111,7 @@
             opacity: 0.9;
         }
 
-        /* === FIX: Icon and text perfectly centered === */
+        /* === FIX: Icon and text perfectly centered (icons removed but flex remains) === */
         .detail-row {
             display: flex;
             align-items: center;      /* vertically center all items */
@@ -303,17 +303,17 @@
 
                     <div></div>
 
-                    <!-- Account details (icons and text now perfectly centered) -->
+                    <!-- Account details (icons removed, Number above Name) -->
                     <div class="space-y-2">
+                        <!-- Number row first (no icon) -->
                         <div class="detail-row">
-                            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            <span class="detail-label">Name:</span>
-                            <span id="cardHolderName" class="detail-value">Holder Name</span>
-                        </div>
-                        <div class="detail-row">
-                            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                            <span class="detail-label">Number:</span>
+                            <span class="detail-label">💳 NUMBER:</span>
                             <span id="cardBankNumber" class="detail-value">000-0-00000-0</span>
+                        </div>
+                        <!-- Name row second (no icon) -->
+                        <div class="detail-row">
+                            <span class="detail-label">👤 NAME:</span>
+                            <span id="cardHolderName" class="detail-value">Holder Name</span>
                         </div>
                     </div>
 
