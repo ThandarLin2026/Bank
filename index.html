@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Card Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Roboto:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', 'Pyidaungsu', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .bank-card {
+            width: 450px;
+            height: 280px;
+            border-radius: 20px;
+            padding: 24px;
+            position: relative;
+            color: white;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .card-bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.05) 100%);
+            z-index: 1;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .qr-box {
+            width: 90px;
+            height: 90px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .qr-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .qr-box span {
+            color: #666;
+            font-size: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .designer-credit {
+            position: absolute;
+            right: 15px;
+            bottom: 8px;
+            font-size: 9px;
+            opacity: 0.4;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            z-index: 5;
+        }
+
+        /* Bank Themes */
+        .bg-bbl { background-color: #003399; }
+        .bg-kbank { background-color: #138f2d; }
+        .bg-ktb { background-color: #00a1e0; }
+        .bg-gsb { background-color: #eb008b; }
+        .bg-scb { background-color: #4e2e7f; }
+        .bg-ttb { background-color: #f15a22; }
+        .bg-ks { background-color: #fdb913; color: #543729 !important; }
+        
+        /* Adjust icon/text colors for light colored banks like Krungsri */
+        .bg-ks .qr-box { background: #ffffff; }
+        .bg-ks .designer-credit { color: #543729; opacity: 0.3; }
+        .bg-ks .border-white\/20 { border-color: rgba(84, 55, 41, 0.2); }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-5xl grid lg:grid-cols-2 gap-10 items-start">
+        
+        <!-- Input Form -->
+        <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
+            <h2 class="text-2xl font-black mb-8 text-gray-800 border-b pb-4">Card Settings</h2>
+            
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Select Bank</label>
+                    <select id="bankSelect" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        <option value="bbl" data-abbr="BBL" data-en="Bangkok Bank" data-th="ธนาคารกรุงเทพ">Bangkok Bank (BBL)</option>
+                        <option value="kbank" data-abbr="K Bank" data-en="Kasikorn Bank" data-th="ธนาคารกสิกรไทย">Kasikorn Bank (K Bank)</option>
+                        <option value="ktb" data-abbr="KTB" data-en="Krungthai Bank" data-th="ธนาคารกรุงไทย">Krungthai Bank (KTB)</option>
+                        <option value="gsb" data-abbr="GSB" data-en="Government Savings Bank" data-th="ธนาคารออมสิน">Government Savings Bank (GSB)</option>
+                        <option value="scb" data-abbr="SCB" data-en="Siam Commercial Bank" data-th="ธนาคารไทยพาณิชย์">Siam Commercial Bank (SCB)</option>
+                        <option value="ttb" data-abbr="TTB" data-en="TMBThanachart Bank" data-th="ธนาคารทหารไทยธนชาต">TMBThanachart Bank (TTB)</option>
+                        <option value="ks" data-abbr="Krungsri" data-en="Krungsri Bank" data-th="ธนาคารกรุงศรีอยุธยา">Krungsri Bank</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Account Holder Name</label>
+                    <input type="text" id="inputName" placeholder="အမည်ရိုက်ထည့်ပါ" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Bank Number</label>
+                    <input type="text" id="inputNumber" placeholder="xxx-x-xxxxx-x" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Upload QR Code</label>
+                    <input type="file" id="qrUpload" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                </div>
+
+                <button id="downloadBtn" class="w-full mt-6 bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 active:scale-95 transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-3 text-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download Card
+                </button>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="flex flex-col items-center">
+            <div id="captureArea" class="bank-card bg-bbl shadow-2xl relative">
+                <div class="card-bg-overlay"></div>
+                
+                <!-- Designer Credit (Watermark style) -->
+                <div class="designer-credit">Design By : JueHtet</div>
+
+                <div class="card-content">
+                    <!-- Top Row: Logo & QR -->
+                    <div class="flex justify-between items-start">
+                        <div class="bg-white/95 p-2 rounded-xl shadow-sm">
+                            <img id="cardBankLogo" src="https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/bbl.png" alt="Bank Logo" class="w-[74px] h-[74px] object-contain">
+                        </div>
+                        <div class="qr-box" id="qrDisplay">
+                            <span>Upload<br>QR Code</span>
+                        </div>
+                    </div>
+
+                    <!-- Bank Name & Abbr -->
+                    <div class="mt-2">
+                        <div class="flex items-baseline gap-2">
+                            <h3 id="cardBankNameEN" class="text-xl font-black">Bangkok Bank</h3>
+                            <span id="cardBankAbbr" class="text-sm font-bold opacity-80">(BBL)</span>
+                        </div>
+                        <p id="cardBankNameTH" class="text-sm opacity-90 font-medium">ธนาคารกรุงเทพ</p>
+                    </div>
+
+                    <!-- Account Info -->
+                    <div class="space-y-2 mb-1">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-white/20 p-1.5 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                            </div>
+                            <span id="cardBankNumber" class="text-2xl font-mono tracking-tighter font-bold">000-0-00000-0</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="bg-white/20 p-1.5 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <span id="cardHolderName" class="text-lg font-bold">Holder Name</span>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="border-t border-white/20 pt-2 flex items-center justify-center gap-2 text-[11px] font-bold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                        <span>ငွေလွှဲပြီးရင် ဖြတ်ပိုင်းပို့ပေးပါ</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex items-center gap-2 text-gray-400">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-sm font-bold uppercase tracking-widest">Live Preview Card</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bankLogos = {
+            bbl: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/bbl.png",
+            kbank: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/kbank.png",
+            ktb: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/ktb.png",
+            gsb: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/om.png",
+            scb: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/scb.png",
+            ttb: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/ttb.png",
+            ks: "https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/ks.png"
+        };
+
+        const bankSelect = document.getElementById('bankSelect');
+        const inputName = document.getElementById('inputName');
+        const inputNumber = document.getElementById('inputNumber');
+        const qrUpload = document.getElementById('qrUpload');
+        
+        const cardArea = document.getElementById('captureArea');
+        const cardBankLogo = document.getElementById('cardBankLogo');
+        const cardBankNameEN = document.getElementById('cardBankNameEN');
+        const cardBankNameTH = document.getElementById('cardBankNameTH');
+        const cardBankAbbr = document.getElementById('cardBankAbbr');
+        const cardBankNumber = document.getElementById('cardBankNumber');
+        const cardHolderName = document.getElementById('cardHolderName');
+        const qrDisplay = document.getElementById('qrDisplay');
+
+        // Logic to update Card
+        bankSelect.addEventListener('change', function() {
+            const val = this.value;
+            const option = this.options[this.selectedIndex];
+            
+            // UI Updates
+            cardBankLogo.src = bankLogos[val];
+            cardBankNameEN.textContent = option.dataset.en;
+            cardBankNameTH.textContent = option.dataset.th;
+            cardBankAbbr.textContent = `(${option.dataset.abbr})`;
+            
+            // Background Update
+            cardArea.className = `bank-card bg-${val} shadow-2xl relative`;
+        });
+
+        inputName.addEventListener('input', function() {
+            cardHolderName.textContent = this.value || "Holder Name";
+        });
+
+        inputNumber.addEventListener('input', function() {
+            cardBankNumber.textContent = this.value || "000-0-00000-0";
+        });
+
+        qrUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    qrDisplay.innerHTML = `<img src="${event.target.result}" alt="QR">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Download Handler
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            html2canvas(cardArea, {
+                useCORS: true,
+                scale: 4, // Ultra high res
+                backgroundColor: null,
+                logging: false,
+                borderRadius: 20
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `BankCard_${inputName.value || 'Bank'}.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+            });
+        });
+    </script>
+</body>
+</html>
+
