@@ -49,10 +49,28 @@
             justify-content: space-between;
         }
 
-        /* QR box – scales with card */
+        /* === bank logo and QR code both fixed 70x70 === */
+        .bank-logo-wrapper {
+            width: 70px;
+            height: 70px;
+            background: white;
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bank-logo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
         .qr-box {
-            width: 22%;                       /* relative to card width */
-            aspect-ratio: 1 / 1;
+            width: 70px;
+            height: 70px;
             background: white;
             border-radius: 12px;
             display: flex;
@@ -79,25 +97,6 @@
             font-weight: 300;
             z-index: 5;
             white-space: nowrap;
-        }
-
-        /* bank logo container scales too */
-        .bank-logo-wrapper {
-            width: 28%;                         /* relative size, fits original proportion */
-            background: white;
-            padding: min(8px, 1.5vw);
-            border-radius: max(10px, 2vw);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            aspect-ratio: 1 / 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .bank-logo-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
         }
 
         /* responsive text using clamp */
@@ -273,13 +272,13 @@
                 <div class="designer-credit">Design By : JueHtet</div>
 
                 <div class="card-content">
-                    <!-- Top row with logos -->
+                    <!-- Top row with logos - both 70x70 now -->
                     <div class="flex justify-between items-start">
-                        <!-- bank logo container (scales) -->
+                        <!-- bank logo container (70x70) -->
                         <div class="bank-logo-wrapper">
                             <img id="cardBankLogo" src="https://raw.githubusercontent.com/ThandarLin2026/Bank/main/bank/bbl.png" alt="Logo">
                         </div>
-                        <!-- QR box (scales) -->
+                        <!-- QR box (70x70) -->
                         <div class="qr-box" id="qrDisplay">
                             <span class="text-[0.5rem] text-gray-400 font-bold text-center">No QR<br>Selected</span>
                         </div>
@@ -306,10 +305,10 @@
                         </div>
                     </div>
 
-                    <!-- Footer note -->
+                    <!-- Footer note - updated text -->
                     <div class="card-footer">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: clamp(12px, 3vw, 16px);"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-                        <span>ငွေလွှဲပြီးရင် ဖြတ်ပိုင်းပို့ပေးပါ</span>
+                        <span>ငွေလွှဲပြီးတိုင်းစလစ်ပို့ပါ</span>
                     </div>
                 </div>
             </div>
