@@ -102,40 +102,40 @@
             line-height: 1.2;
         }
         .card-bank-abbr {
-            font-size: clamp(0.6rem, 2.5vw, 0.8rem);
-            font-weight: 700;
-            opacity: 0.8;
+            font-size: clamp(0.9rem, 3.5vw, 1.2rem);  /* INCREASED SIZE */
+            font-weight: 800;
+            opacity: 0.9;
         }
         .card-bank-th {
             font-size: clamp(0.5rem, 2vw, 0.7rem);
             opacity: 0.9;
         }
 
-        /* === FIX: Icon and text perfectly centered (icons removed but flex remains) === */
+        /* === DETAIL ROWS: larger text, moved upward (no spacer) === */
         .detail-row {
             display: flex;
-            align-items: center;      /* vertically center all items */
+            align-items: center;
             gap: 8px;
-            font-size: clamp(0.8rem, 3.5vw, 1.1rem);
-            line-height: 1;           /* remove extra line spacing */
+            font-size: clamp(1rem, 4vw, 1.3rem);   /* INCREASED SIZE */
+            line-height: 1.2;
         }
 
         .detail-icon {
             width: 20px;
-            height: 20px;             /* fixed size */
+            height: 20px;
             flex-shrink: 0;
             color: currentColor;
             opacity: 0.8;
             display: inline-block;
-            vertical-align: middle;    /* fallback */
-            margin: 0;                 /* no extra margin */
+            vertical-align: middle;
+            margin: 0;
         }
 
         .detail-label {
             font-weight: 500;
             opacity: 0.9;
             letter-spacing: 0.3px;
-            line-height: 1;            /* match icon height */
+            line-height: 1.2;
         }
 
         .detail-value {
@@ -143,7 +143,7 @@
             font-family: monospace;
             letter-spacing: -0.02em;
             margin-left: 4px;
-            line-height: 1;            /* match icon height */
+            line-height: 1.2;
         }
 
         .card-footer {
@@ -301,25 +301,24 @@
                         </div>
                     </div>
 
-                    <div></div>
+                    <!-- EMPTY DIV REMOVED – details move upward automatically -->
 
-                    <!-- Account details (icons removed, Number above Name) -->
+                    <!-- Account details (Number above Name, text enlarged) -->
                     <div class="space-y-2">
-                        <!-- Number row first (no icon) -->
+                        <!-- Number row first -->
                         <div class="detail-row">
-                            <span class="detail-label">💳 NUMBER:</span>
+                            <span class="detail-label">Number:</span>
                             <span id="cardBankNumber" class="detail-value">000-0-00000-0</span>
                         </div>
-                        <!-- Name row second (no icon) -->
+                        <!-- Name row second -->
                         <div class="detail-row">
-                            <span class="detail-label">👤 NAME:</span>
+                            <span class="detail-label">Name:</span>
                             <span id="cardHolderName" class="detail-value">Holder Name</span>
                         </div>
                     </div>
 
-                    <!-- Footer -->
+                    <!-- Footer – icon removed, only text remains -->
                     <div class="card-footer">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
                         <span>ငွေလွှဲပြီးတိုင်းစလစ်ပို့ပါ</span>
                     </div>
                 </div>
